@@ -1,0 +1,29 @@
+### https://raw.github.com/github/gitignore/ae5dd85759b8a94e5f3276383295f3b655aaa975/Global/Vim.gitignore
+
+# swap
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+# session
+Session.vim
+# temporary
+.netrwhist
+*~
+# auto-generated tag files
+tags
+
+
+### https://raw.github.com/github/gitignore/ae5dd85759b8a94e5f3276383295f3b655aaa975/Global/Linux.gitignore
+
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+#環境変数
+.env
