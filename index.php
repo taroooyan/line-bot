@@ -5,9 +5,9 @@ $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
 // 環境変数の読み込み
-$channel_id = getenv('CHANNEL_ID');
+$channel_id     = getenv('CHANNEL_ID');
 $channel_secret = getenv('CHANNEL_SECRET');
-$mid = getenv('MID');
+$mid            = getenv('MID');
 
 // line-botの情報
 $post_header = array(
@@ -18,23 +18,37 @@ $post_header = array(
 );
 
 // callbackで来た情報の取得
-$json_string = file_get_contents('php://input');
-$jsonObj = json_decode($json_string);
-$to = $jsonObj->{"result"}[0]->{"content"}->{"from"};
+$json_string     = file_get_contents('php://input');
+$receive_content = json_decode($json_string)->result[0]->content;
+$to              = $receive_content->from;
+$receive_text    = $receive_content->text;
+
+switch($receive_text){
+  case "mid":
+    $msg = "Your MID is {$to}";
+    break;
+  default:
+    $msg = $receive_text;
+    break;
+}
 
 // テキストで返事をする場合
-$send_msg = [
-  'contentType'=>1,
-  "toType"=>1,
-  "text"=>"hello\nYour Mid = {$to}" ];
+// "contentType"=>1,
+// "toType"=>1,
+$content = [
+  "contentType" => 1,
+  "toType"      => 1,
+  "text"        => $msg
+];
 
 // toChannelとeventTypeは固定値
 // toは配列で渡す必要がある
 $post_body = [
-  "to"=>[$to],
-  "toChannel"=>"1383378250",
-  "eventType"=>"138311608800106203",
-  "content"=>$send_msg ];
+  "to"        => [$to],
+  "toChannel" => "1383378250",
+  "eventType" => "138311608800106203",
+  "content"   => $content
+];
 
 $client = curl_init("https://trialbot-api.line.me/v1/events");
 curl_setopt($client, CURLOPT_POST, true);
