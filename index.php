@@ -27,6 +27,10 @@ switch($receive_text){
   case "mid":
     $msg = "Your MID is {$to}";
     break;
+  case "起こして":
+  case "おこして":
+    $msg = "おはよう";
+    break;
   default:
     $msg = $receive_text;
     break;
@@ -57,5 +61,13 @@ curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($client, CURLOPT_POSTFIELDS, json_encode($post_body));
 curl_setopt($client, CURLOPT_HTTPHEADER, $post_header);
 
-$response = curl_exec($client);
+if (preg_match('/おこして|起こして/', $receive_text)){
+  for ($c = 0; $c < 15; $c++){
+    $response = curl_exec($client);
+    sleep(2);
+  }
+}
+else{
+  $response = curl_exec($client);
+}
 curl_close($client);
