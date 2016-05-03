@@ -33,7 +33,7 @@ switch(true){
     # $extract_time[1] = 時間
     # $extract_time[2] = 分
     preg_match('/([0-9]+).+?([0-9]+)/', $receive_text, $extract_time);
-    $set_time = $extract_time[1].$extract_time[2];
+    $set_time = $extract_time[1].":".$extract_time[2];
     $msg = "おはよう";
     break;
   default:
@@ -71,8 +71,7 @@ if (preg_match('/[起|お]こして/', $receive_text)){
     date_default_timezone_set('Asia/Tokyo');
     # 指定の時間まで待機
     do{
-    # //分の頭0を取って格納
-      $current_time = date("G").":".preg_replace('/^0/', '', date("i"));
+      $current_time = date("G:i");
       sleep(60);
     }while(strtotime($current_time) < strtotime($set_time));
   for ($c = 0; $c < 15; $c++){
