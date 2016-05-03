@@ -28,7 +28,11 @@ switch(true){
   case $receive_text == "mid":
     $msg = "Your MID is {$to}";
     break;
-  case preg_match('/[起|お]こして/',$receive_text):
+  case preg_match('/[起|お]こして/' ,$receive_text):
+    # 時間の抽出
+    # $set_time[1] = 時間
+    # $set_time[2] = 分
+    preg_match('/([0-9]+).+?([0-9]+)/', $receive_text, $set_time);
     $msg = "おはよう";
     break;
   default:
@@ -54,6 +58,7 @@ $post_body = [
   "content"   => $content
 ];
 
+# httpリクエストの作成
 $client = curl_init("https://trialbot-api.line.me/v1/events");
 curl_setopt($client, CURLOPT_POST, true);
 curl_setopt($client, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -62,6 +67,11 @@ curl_setopt($client, CURLOPT_POSTFIELDS, json_encode($post_body));
 curl_setopt($client, CURLOPT_HTTPHEADER, $post_header);
 
 if (preg_match('/[起|お]こして/', $receive_text)){
+  do{
+    date_default_timezone_set('Asia/Tokyo');
+    # //分の頭0を取る
+    $time_now = date("G").":".preg_replace('/^0/', '', date("i"));
+  }while($time_now == $set_time);
   for ($c = 0; $c < 15; $c++){
     $response = curl_exec($client);
     sleep(2);
