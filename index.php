@@ -30,9 +30,10 @@ switch(true){
     break;
   case preg_match('/[起|お]こして/' ,$receive_text):
     # 時間の抽出
-    # $set_time[1] = 時間
-    # $set_time[2] = 分
-    preg_match('/([0-9]+).+?([0-9]+)/', $receive_text, $set_time);
+    # $extract_time[1] = 時間
+    # $extract_time[2] = 分
+    preg_match('/([0-9]+).+?([0-9]+)/', $receive_text, $extract_time);
+    $set_time = $extract_time[1].$extract_time[2];
     $msg = "おはよう";
     break;
   default:
