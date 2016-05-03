@@ -67,11 +67,13 @@ curl_setopt($client, CURLOPT_POSTFIELDS, json_encode($post_body));
 curl_setopt($client, CURLOPT_HTTPHEADER, $post_header);
 
 if (preg_match('/[起|お]こして/', $receive_text)){
-  do{
     date_default_timezone_set('Asia/Tokyo');
-    # //分の頭0を取る
-    $time_now = date("G").":".preg_replace('/^0/', '', date("i"));
-  }while($time_now == $set_time);
+    # 指定の時間まで待機
+    do{
+    # //分の頭0を取って格納
+      $curren_time = date("G").":".preg_replace('/^0/', '', date("i"));
+      sleep(60);
+    }while(strtotime($curren_time) < strtotime($set_time));
   for ($c = 0; $c < 15; $c++){
     $response = curl_exec($client);
     sleep(2);
