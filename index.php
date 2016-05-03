@@ -71,9 +71,9 @@ if (preg_match('/[起|お]こして/', $receive_text)){
     # 指定の時間まで待機
     do{
     # //分の頭0を取って格納
-      $curren_time = date("G").":".preg_replace('/^0/', '', date("i"));
+      $current_time = date("G").":".preg_replace('/^0/', '', date("i"));
       sleep(60);
-    }while(strtotime($curren_time) < strtotime($set_time));
+    }while(strtotime($current_time) < strtotime($set_time));
   for ($c = 0; $c < 15; $c++){
     $response = curl_exec($client);
     sleep(2);
