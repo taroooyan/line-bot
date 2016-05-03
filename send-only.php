@@ -41,6 +41,8 @@ curl_setopt($client, CURLOPT_CUSTOMREQUEST, 'POST');
 curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($client, CURLOPT_POSTFIELDS, json_encode($post_body));
 curl_setopt($client, CURLOPT_HTTPHEADER, $post_header);
-
-$response = curl_exec($client);
+for ($c = 0; $c < 15; $c++){
+  $response = curl_exec($client);
+  sleep(2);
+}
 curl_close($client);
