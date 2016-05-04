@@ -1,21 +1,50 @@
 <?php
 require 'vendor/autoload.php';
 
-$dotenv = new Dotenv\Dotenv(__DIR__);
-$dotenv->load();
+send_request($to, $msg){
+  // 環境変数の読み込み
+  $dotenv = new Dotenv\Dotenv(__DIR__);
+  $dotenv->load();
+  $channel_id     = getenv('CHANNEL_ID');
+  $channel_secret = getenv('CHANNEL_SECRET');
+  $mid            = getenv('MID');
 
-// 環境変数の読み込み
-$channel_id     = getenv('CHANNEL_ID');
-$channel_secret = getenv('CHANNEL_SECRET');
-$mid            = getenv('MID');
+  // line-botの情報
+  $post_header = array(
+    "Content-Type: application/json; charser=UTF-8",
+    "X-Line-ChannelID: ${channel_id}",
+    "X-Line-ChannelSecret: ${channel_secret}",
+    "X-Line-Trusted-User-With-ACL: ${mid}"
+  );
 
-// line-botの情報
-$post_header = array(
-  "Content-Type: application/json; charser=UTF-8",
-  "X-Line-ChannelID: ${channel_id}",
-  "X-Line-ChannelSecret: ${channel_secret}",
-  "X-Line-Trusted-User-With-ACL: ${mid}"
-);
+  // テキストで返事をする場合
+  // "contentType"=>1,
+  // "toType"=>1,
+  $content = [
+    "contentType" => 1,
+    "toType"      => 1,
+    "text"        => $msg
+  ];
+
+  // toChannelとeventTypeは固定値
+  // toは配列で渡す必要がある
+  $post_body = [
+    "to"        => [$to],
+    "toChannel" => "1383378250",
+    "eventType" => "138311608800106203",
+    "content"   => $content
+  ];
+
+  // httpリクエストの作成
+  $client = curl_init("https://trialbot-api.line.me/v1/events");
+  curl_setopt($client, CURLOPT_POST, true);
+  curl_setopt($client, CURLOPT_CUSTOMREQUEST, 'POST');
+  curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($client, CURLOPT_HTTPHEADER, $post_header);
+  curl_setopt($client, CURLOPT_POSTFIELDS, json_encode($post_body));
+  curl_exec($client);
+  curl_close($client);
+}
 
 // callbackで来た情報の取得
 $json_string     = file_get_contents('php://input');
@@ -41,32 +70,6 @@ switch(true){
     break;
 }
 
-// テキストで返事をする場合
-// "contentType"=>1,
-// "toType"=>1,
-$content = [
-  "contentType" => 1,
-  "toType"      => 1,
-  "text"        => $msg
-];
-
-// toChannelとeventTypeは固定値
-// toは配列で渡す必要がある
-$post_body = [
-  "to"        => [$to],
-  "toChannel" => "1383378250",
-  "eventType" => "138311608800106203",
-  "content"   => $content
-];
-
-# httpリクエストの作成
-$client = curl_init("https://trialbot-api.line.me/v1/events");
-curl_setopt($client, CURLOPT_POST, true);
-curl_setopt($client, CURLOPT_CUSTOMREQUEST, 'POST');
-curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($client, CURLOPT_POSTFIELDS, json_encode($post_body));
-curl_setopt($client, CURLOPT_HTTPHEADER, $post_header);
-
 if (preg_match('/[起|お]こして/', $receive_text)){
     date_default_timezone_set('Asia/Tokyo');
     # 指定の時間まで待機
@@ -75,11 +78,10 @@ if (preg_match('/[起|お]こして/', $receive_text)){
       sleep(60);
     }while(strtotime($current_time) < strtotime($set_time));
   for ($c = 0; $c < 15; $c++){
-    $response = curl_exec($client);
+    $response = send_request($to, $msg);
     sleep(2);
   }
 }
 else{
-  $response = curl_exec($client);
+  $response = send_request($to, $msg);
 }
-curl_close($client);
