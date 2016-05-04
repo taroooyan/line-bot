@@ -1,7 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 
-send_request($to, $msg){
+function send_request($to, $msg){
   // 環境変数の読み込み
   $dotenv = new Dotenv\Dotenv(__DIR__);
   $dotenv->load();
@@ -78,10 +78,10 @@ if (preg_match('/[起|お]こして/', $receive_text)){
       sleep(60);
     }while(strtotime($current_time) < strtotime($set_time));
   for ($c = 0; $c < 15; $c++){
-    $response = send_request($to, $msg);
+    send_request($to, $msg);
     sleep(2);
   }
 }
 else{
-  $response = send_request($to, $msg);
+  send_request($to, $msg);
 }
