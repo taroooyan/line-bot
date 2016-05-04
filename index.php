@@ -72,10 +72,11 @@ switch(true){
 
 if (preg_match('/[起|お]こして/', $receive_text)){
     date_default_timezone_set('Asia/Tokyo');
-    send_request($to, "わかった。$set_timeに起こすね。");
+    send_request($to, "わかった。${set_time}に起こすね。");
     # 指定の時間まで待機
     do{
-      $current_time = date("G:i");
+      # 1分前から通知する
+      $current_time = date("G:i", strtotime("+ 1 minute"));
       sleep(60);
     }while(strtotime($current_time) < strtotime($set_time));
   for ($c = 0; $c < 15; $c++){
